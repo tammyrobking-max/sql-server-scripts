@@ -1,0 +1,23 @@
+-- Protect the transaction with TRY...CATCH
+BEGIN TRY
+
+    -- Start a transaction to update a record
+    BEGIN TRANSACTION;
+
+    -- Insert a new customer into the Customers table.
+    --Intentionally violate a NOT NULL constraint by leaving out one of the required fields.
+    --You can omit one of the following; 'age', 'gender', 'city', 'country', 'registration_date', or 'subscription_type'.
+    --Left out age.
+    INSERT INTO [dbo].[Customers] (user_id, gender, city, state, country, occupation, income_bracket, registration_date, subscription_type)
+    VALUES ('TH0051', 'F', 'Midlothian', 'Virginia', 'USA', 'Data Analyst', '100K-150K', '2026-09-15', 'Premium');
+
+    -- Commit the transaction if successful. No errors.
+    COMMIT;
+END TRY
+BEGIN CATCH
+    --Rollback if the transaction is not successful. Errors.
+    ROLLBACK;
+    PRINT 'Transaction Rolled Back.'
+    PRINT 'Error Message:' + ERROR_MESSAGE();
+END CATCH;
+GO
