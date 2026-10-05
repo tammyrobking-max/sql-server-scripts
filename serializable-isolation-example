@@ -1,0 +1,24 @@
+--Use TechHealthDB
+USE TechHealthDB
+
+--You’re discounting all sales over $200 that do not yet have a discount. 
+--Meanwhile, another user is attempting to insert a new $299.99 sale.
+--You must prevent this new sale from slipping into your qualifying range during the discounting process.
+--Use SERIALIZABLE to ensure no new qualifying rows are inserted while the discount update is active.
+SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
+BEGIN TRANSACTION
+--View all sales over $200.00 without a discount.
+SELECT *
+FROM [dbo].[Sales]
+WHERE unit_price > 200.00 AND discount_applied = 0;
+
+
+--Add a 15-second delay before the update to simulate reporting or business logic.
+WAITFOR DELAY '00:00:15';
+
+UPDATE [dbo].[Sales]
+SET discount_applied = 10.00
+WHERE unit_price > 200.00 AND discount_applied = 0;
+
+COMMIT TRANSACTION;
+GO
